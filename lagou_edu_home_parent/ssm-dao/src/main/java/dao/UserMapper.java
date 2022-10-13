@@ -14,5 +14,6 @@ public interface UserMapper {
     List<Menu> getParentMenu(List<Integer> roleId);
     List<Menu> getSubMenu(int parentId);
     List<Resource> getResourceByRoleId(List<Integer> roleId);
+    List<Resource> getResourceByRoleId2(List<Integer> roleId);
 
 }
