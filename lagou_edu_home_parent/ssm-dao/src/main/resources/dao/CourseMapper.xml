@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="dao.CourseMapper">
+    <select id="findCourseByCondition" parameterType="heying.domain.CourseVo" resultType="heying.domain.Course">
+        select * from course
+        <where>
+            <if test="courseName != null and courseName != ''">
+                and course_name like concat('%',#{courseName},'%')
+            </if>
+            <if test="status != null and status != ''">
+                and status = #{status}
+            </if>
+        </where>
+    </select>
+
+    <insert id="addCourse" parameterType="heying.domain.Course">
+        insert into course(course_name, brief, price, discounts, discounts_tag, course_description_mark_down, course_img_url, create_time, update_time, course_list_img, sort_num, preview_first_field, preview_second_field, sales)
+            values (#{courseName}, #{brief}, #{price}, #{discounts}, #{discountsTag}, #{courseDescriptionMarkDown}, #{courseImgUrl}, #{createTime}, #{updateTime}, #{courseListImg}, #{sortNum}, #{previewFirstField}, #{previewSecondField}, #{sales});
+
+    <selectKey resultType="int" order="AFTER" keyProperty="id">
+        select LAST_INSERT_ID()
+    </selectKey>
+
+    </insert>
+
+    <insert id="addTeacher" parameterType="heying.domain.Teacher">
+
+        insert into teacher(course_id, teacher_name, position, description, create_time, update_time, is_del) VALUES (#{courseId}, #{teacherName}, #{position}, #{description}, #{createTime}, #{updateTime}, #{isDel});
+
+    </insert>
+
+    <select id="findCourseById" parameterType="int" resultType="heying.domain.CourseVo">
+
+        select c.*, t.teacher_name, t.position, t.description
+        from course c left join teacher t on c.id = t.course_id
+        where c.id = #{id};
+
+    </select>
+
+    <update id="updateCourse" parameterType="heying.domain.Course">
+        update course
+        <trim prefix="set" suffixOverrides=",">
+            <if test="courseName != null and courseName != ''">
+                course_name = #{courseName},
+            </if>
+            <if test="brief != null and brief != ''">
+                brief = #{brief},
+            </if>
+            <if test="previewFirstField != null and previewFirstField != ''">
+                preview_first_field = #{previewFirstField},
+            </if>
+            <if test="previewSecondField != null and previewSecondField != ''">
+                preview_second_field = #{previewSecondField},
+            </if>
+            <if test="courseImgUrl != null and courseImgUrl != ''">
+                course_img_url = #{courseImgUrl},
+            </if>
+            <if test="courseListImg != null and courseListImg != ''">
+                course_list_img = #{courseListImg},
+            </if>
+            <if test="sortNum != null and sortNum != ''">
+                sort_num = #{sortNum},
+            </if>
+            <if test="price != null and price != ''">
+                price = #{price},
+            </if>
+            <if test="discounts != null and discounts != ''">
+                discounts = #{discounts},
+            </if>
+            <if test="sales != null and sales != ''">
+                sales = #{sales},
+            </if>
+            <if test="discountsTag != null and discountsTag != ''">
+                discounts_tag = #{discountsTag},
+            </if>
+            <if test="courseDescriptionMarkDown != null and courseDescriptionMarkDown != ''">
+                course_description_mark_down = #{courseDescriptionMarkDown},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime},
+            </if>
+            </trim>
+
+        <where>
+            <if test="id != null and id != ''">
+                id = #{id}
+            </if>
+        </where>
+    </update>
+
+    <update id="updateTeacher" parameterType="heying.domain.Teacher">
+        update teacher
+
+        <trim prefix="set" suffixOverrides=",">
+            <if test="teacherName != null and teacherName != ''">
+                teacher_name = #{teacherName},
+            </if>
+            <if test="position != null and position != ''">
+                position = #{position},
+            </if>
+            <if test="description != null and description != ''">
+                description = #{description},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime},
+            </if>
+        </trim>
+
+        <where>
+            <if test="courseId != null and courseId != ''">
+                course_id = #{courseId}
+            </if>
+        </where>
+    </update>
+
+    <update id="updateCourseStatus" parameterType="heying.domain.Course">
+        update course set status = #{status}, update_time = #{updateTime} where id = #{id}
+    </update>
+
+</mapper>

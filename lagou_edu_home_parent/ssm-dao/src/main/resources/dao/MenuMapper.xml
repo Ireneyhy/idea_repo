@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="dao.MenuMapper">
+    <select id="findSubMenuList" parameterType="int" resultMap="MenuList">
+        select * from menu where parent_id = #{parentId}
+    </select>
+    <resultMap id="MenuList" type="menu">
+        <id column="id" property="id"></id>
+        <result column="href" property="href"></result>
+        <result column="icon" property="icon"></result>
+        <result column="name" property="name"></result>
+        <result column="parent_id" property="parentId"></result>
+        <result column="description" property="description"></result>
+        <result column="order_num" property="orderNum"></result>
+        <result column="shown" property="shown"></result>
+        <result column="created_time" property="createdTime"></result>
+        <result column="updated_time" property="updatedTime"></result>
+        <result column="created_by" property="createdBy"></result>
+        <result column="updated_by" property="updatedBy"></result>
+        <collection property="subMenuList" ofType="menu" select="findSubMenuList" column="id"></collection>
+    </resultMap>
+    <select id="getRoleMenus" parameterType="int" resultType="int">
+        select menu.id from menu inner join roles inner join role_menu_relation
+        on roles.id = role_menu_relation.role_id
+        and role_menu_relation.menu_id = menu.id
+        where roles.id = #{id};
+    </select>
+    <select id="findAll" resultType="menu">
+        select * from menu
+    </select>
+    <select id="findMenuInfo" parameterType="int" resultType="menu">
+        select * from menu where id = #{id}
+    </select>
+</mapper>

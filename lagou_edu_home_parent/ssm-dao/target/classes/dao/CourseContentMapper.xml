@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="dao.CourseContentMapper">
+
+    <select id="findSectionAndLesson" parameterType="int" resultMap="SectionAndLesson">
+
+        select cs.id sectionId, section_name, theme, cl.id lessonId
+        from course_section cs left join course_lesson cl
+            on cs.id = cl.section_id
+        where cs.course_id = #{id}
+    </select>
+    <resultMap id="SectionAndLesson" type="heying.domain.CourseSection">
+        <id property="id" column="id"></id>
+        <result property="sectionName" column="section_name"></result>
+
+        <collection property="lesson" ofType="heying.domain.CourseLesson">
+            <result property="id" column="lessonId"></result>
+            <result property="theme" column="theme"></result>
+        </collection>
+    </resultMap>
+    
+    <select id="findCourseName" parameterType="int" resultType="heying.domain.Course">
+        select course_name from course where id = #{id}
+    </select>
+    
+    <insert id="addSection" parameterType="heying.domain.CourseSection">
+
+        insert into course_section(course_id, section_name, description, order_num, update_time, create_time)
+        values (#{courseId}, #{sectionName}, #{description}, #{orderNum}, #{updateTime}, #{createTime})
+
+    </insert>
+
+    <update id="updateSection" parameterType="heying.domain.CourseSection">
+        update course_section
+        <trim prefix="set" suffixOverrides=",">
+            <if test="sectionName != null and sectionName != ''">
+                section_name = #{sectionName},
+            </if>
+            <if test="description != null and description != ''">
+                description = #{description},
+            </if>
+            <if test="orderNum != null and orderNum != ''">
+                order_num = #{orderNum},
+            </if>
+            <if test="update != null">
+                update_time=#{updateTime},
+            </if>
+        </trim>
+        <where>
+            <if test="id != null and id != ''">id = #{id}</if>
+        </where>
+    </update>
+    
+    <update id="updateSectionStatus" parameterType="heying.domain.CourseSection">
+        update course_section set status=#{status}, update_time=#{updateTime} where id = #{id}
+    </update>
+
+</mapper>

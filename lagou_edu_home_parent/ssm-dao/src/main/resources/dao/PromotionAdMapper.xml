@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="dao.PromotionAdMapper">
+    <select id="findAll" resultMap="ad_space">
+        select * from promotion_ad
+    </select>
+    <resultMap id="ad_space" type="heying.domain.PromotionAd">
+        <id property="id" column="id"></id>
+        <result property="spaceId" column="spaceId"></result>
+        <result property="keyword" column="keyword"></result>
+        <result property="htmlContent" column="htmlContent"></result>
+        <result property="text" column="text"></result>
+        <result property="link" column="link"></result>
+        <result property="startTime" column="startTime"></result>
+        <result property="endTime" column="endTime"></result>
+        <result property="createTime" column="createTime"></result>
+        <result property="updateTime" column="updateTime"></result>
+        <result property="status" column="status"></result>
+        <result property="priority" column="priority"></result>
+        <result property="img" column="img"></result>
+        <association property="promotionSpace" select="dao.PromotionSpaceMapper.findSpaceById" column="spaceId" javaType="heying.domain.PromotionSpace"></association>
+
+    </resultMap>
+
+    <update id="updateStatus" parameterType="promotionad">
+        update promotion_ad set status=#{status}, updateTime=#{updateTime} where id=#{id}
+    </update>
+</mapper>

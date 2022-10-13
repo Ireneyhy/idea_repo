@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="dao.UserMapper">
+    <select id="findAll" parameterType="uservo" resultType="user">
+        select * from user
+         <where>
+            <if test="true">
+                and is_del != 1
+            </if>
+             <if test="username != null and username != ''">
+                 and name = #{username}
+             </if>
+            <if test="startCreateTime != null and endCreateTime != null">
+                and create_time BETWEEN #{startCreateTime} AND #{endCreateTime}
+            </if>
+        </where>
+    </select>
+
+    <select id="login" parameterType="user" resultType="user">
+        select * from user where phone = #{phone}
+    </select>
+
+    <select id="findUserRole" parameterType="int" resultType="role">
+        select *
+        from roles inner join user_role_relation
+        on roles.id = user_role_relation.role_id
+        where user_id = #{userId}
+    </select>
+    
+    <delete id="clearRole" parameterType="int">
+        delete from user_role_relation where user_id = #{userId}
+    </delete>
+
+    <insert id="allocateRole" parameterType="heying.domain.User_role_relation">
+        insert into user_role_relation values (null,#{userId},#{roleId},#{createdTime},#{updatedTime},#{createdBy},#{updatedBy})
+    </insert>
+    
+    <select id="getParentMenu" parameterType="java.util.List" resultType="menu">
+        select menu.name, menu.id
+        from menu inner join role_menu_relation rmr on menu.id = rmr.menu_id
+        where menu.parent_id = -1 and rmr.role_id in
+        <foreach collection="list" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+    
+    <select id="getSubMenu" parameterType="int" resultType="menu">
+        select menu.id, menu.name from menu where parent_id = #{parentId}
+    </select>
+
+    <select id="getResourceByRoleId" parameterType="java.util.List" resultType="resource">
+        select resource.name, resource.id
+        from resource inner join role_resource_relation
+        on resource.id = role_resource_relation.resource_id
+        <where>
+            <foreach collection="list" item="item" open="role_resource_relation.role_id in (" separator="," close=")">
+                #{item}
+            </foreach>
+        </where>
+    </select>
+</mapper>
