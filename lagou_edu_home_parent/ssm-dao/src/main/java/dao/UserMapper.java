@@ -16,4 +16,10 @@ public interface UserMapper {
     List<Resource> getResourceByRoleId(List<Integer> roleId);
     List<Resource> getResourceByRoleId2(List<Integer> roleId);
 
+    void test1();
+    void test2();
+    void test3();
+    void test4();
+
+
 }
